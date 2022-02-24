@@ -20,4 +20,5 @@ public final class Constants {
 
 	public static final double INTAKE_SPEED = 0.15;
 	public static final double SHOOT_SPEED = -1.0;
+	public static final double CLIMB_SPEED = -0.75;
 }

@@ -13,10 +13,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
 	private final MotorController clawLeft, clawRight, clawRotator;
 
-	public IntakeSubsystem() {
-		clawLeft = new WPI_VictorSPX(4);
-		clawRight = new WPI_VictorSPX(5);
-		clawRotator = new WPI_VictorSPX(6);
+	public IntakeSubsystem(int clawLeftID, int clawRightID, int rotatorID) {
+		clawLeft = new WPI_VictorSPX(clawLeftID);
+		clawRight = new WPI_VictorSPX(clawRightID);
+		clawRotator = new WPI_VictorSPX(rotatorID);
 		clawLeft.setInverted(true);
 		clawRight.setInverted(true);
 		clawRotator.setInverted(true);
