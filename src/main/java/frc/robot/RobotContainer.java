@@ -4,20 +4,29 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.ConsumerStartEndCommand;
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 
 public class RobotContainer {
 
-	private IntakeSubsystem intakeSubsystem;
+	private final IntakeSubsystem intakeSubsystem;
+	private final DriveSubsystem<?> driveSubsystem;
 	private XboxController controller;
 
 	public RobotContainer() {
 		intakeSubsystem = new IntakeSubsystem();
+		driveSubsystem = new DriveSubsystem<WPI_TalonFX>(3, 1, 0, 2, WPI_TalonFX::new);
 		controller = new XboxController(0);
 		configureButtonBindings();
+		configureDefaultCommands();
+	}
+
+	private void configureDefaultCommands() {
+		driveSubsystem.setDefaultCommand(new DriveCommand(driveSubsystem, controller));
 	}
 
 	@SuppressWarnings({ "unused" }) // Unused Buttons
