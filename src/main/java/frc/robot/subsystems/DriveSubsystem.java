@@ -23,9 +23,6 @@ public class DriveSubsystem<TMotor extends MotorController> extends SubsystemBas
 		drive = new DifferentialDrive(
 				new MotorControllerGroup(masterLeft, slaveLeft),
 				new MotorControllerGroup(masterRight, slaveRight));
-
-		masterLeft.setInverted(true);
-		slaveLeft.setInverted(true);
 	}
 
 	public void tankDrive(double left, double right) {
