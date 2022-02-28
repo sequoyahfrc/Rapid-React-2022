@@ -6,6 +6,10 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.ConsumerStartEndCommand;
 import frc.robot.commands.DriveCommand;
@@ -19,12 +23,15 @@ public class RobotContainer {
 	private final DriveSubsystem<?> driveSubsystem;
 	private final ClimbSubsystem climbSubsystem;
 	private XboxController controller;
+	private Compressor compressor;
 
 	public RobotContainer() {
 		intakeSubsystem = new IntakeSubsystem(4, 5, 6);
-		driveSubsystem = new DriveSubsystem<WPI_TalonFX>(3, 1, 0, 2, WPI_TalonFX::new);
+		driveSubsystem = new DriveSubsystem<WPI_TalonFX>(3, 1, 8, 2, WPI_TalonFX::new);
 		climbSubsystem = new ClimbSubsystem(7, 4);
 		controller = new XboxController(0);
+		compressor = new Compressor(PneumaticsModuleType.CTREPCM);
+		compressor.enableDigital();
 		configureButtonBindings();
 		configureDefaultCommands();
 	}
@@ -51,6 +58,9 @@ public class RobotContainer {
 		buttons.getDPadDown()
 				.whenHeld(new ConsumerStartEndCommand<Double>(-Constants.CLIMB_SPEED, 0.0, climbSubsystem::setMotor,
 						climbSubsystem));
-
+		buttons.getDPadLeft()
+				.whenPressed(new InstantCommand(() -> climbSubsystem.setSolenoid(false), climbSubsystem));
+		buttons.getDPadRight()
+				.whenPressed(new InstantCommand(() -> climbSubsystem.setSolenoid(true), climbSubsystem));
 	}
 }
