@@ -7,9 +7,15 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ConsumerStartEndCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.ClimbSubsystem;
@@ -27,7 +33,7 @@ public class RobotContainer {
 	public RobotContainer() {
 		intakeSubsystem = new IntakeSubsystem(4, 5, 6);
 		driveSubsystem = new DriveSubsystem<WPI_TalonFX>(3, 1, 8, 2, WPI_TalonFX::new);
-		climbSubsystem = new ClimbSubsystem(7, 4);
+		climbSubsystem = new ClimbSubsystem(7, 4, 5);
 		controller = new XboxController(0);
 		compressor = new Compressor(PneumaticsModuleType.CTREPCM);
 		compressor.enableDigital();
@@ -37,6 +43,13 @@ public class RobotContainer {
 
 	private void configureDefaultCommands() {
 		driveSubsystem.setDefaultCommand(new DriveCommand(driveSubsystem, controller));
+		// TODO: remove this
+		var c = new InstantCommand(() -> {
+			System.out.println(intakeSubsystem.getEncoderValue());
+			SmartDashboard.putString("DB/String 0", "Encoder: " + intakeSubsystem.getEncoderValue());
+		}, intakeSubsystem);
+		c.addRequirements(intakeSubsystem);
+		// CommandScheduler.getInstance().schedule(c.perpetually());
 	}
 
 	private void configureButtonBindings() {
@@ -45,8 +58,13 @@ public class RobotContainer {
 				.whenHeld(new ConsumerStartEndCommand<Double>(Constants.INTAKE_SPEED, 0.0, intakeSubsystem::setClaw,
 						intakeSubsystem));
 		buttons.getB()
-				.whenHeld(new ConsumerStartEndCommand<Double>(Constants.SHOOT_SPEED, 0.0, intakeSubsystem::setClaw,
-						intakeSubsystem));
+				.whenHeld(new StartEndCommand(() -> {
+					intakeSubsystem.setSolenoid(true);
+					intakeSubsystem.setClaw(Constants.SHOOT_SPEED);
+				}, () -> {
+					intakeSubsystem.setClaw(0);
+					intakeSubsystem.setSolenoid(false);
+				}, intakeSubsystem));
 		buttons.getX().whenHeld(
 				new ConsumerStartEndCommand<Double>(0.25, 0.0, intakeSubsystem::setClawRotator, intakeSubsystem));
 		buttons.getY().whenHeld(
@@ -58,8 +76,12 @@ public class RobotContainer {
 				.whenHeld(new ConsumerStartEndCommand<Double>(-Constants.CLIMB_SPEED, 0.0, climbSubsystem::setMotor,
 						climbSubsystem));
 		buttons.getDPadLeft()
-				.whenPressed(new InstantCommand(() -> climbSubsystem.setSolenoid(false), climbSubsystem));
+				.whenHeld(new InstantCommand(() -> {
+					climbSubsystem.setSolenoid(Value.kReverse);
+				}, climbSubsystem).perpetually());
 		buttons.getDPadRight()
-				.whenPressed(new InstantCommand(() -> climbSubsystem.setSolenoid(true), climbSubsystem));
+				.whenHeld(new InstantCommand(() -> {
+					climbSubsystem.setSolenoid(Value.kForward);
+				}, climbSubsystem).perpetually());
 	}
 }
