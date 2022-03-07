@@ -25,9 +25,6 @@ public class IntakeSubsystem extends SubsystemBase {
 		clawRight = new WPI_VictorSPX(clawRightID);
 		clawRotator = new WPI_TalonSRX(rotatorID);
 		solenoid = new Solenoid(0, PneumaticsModuleType.CTREPCM, 6);
-
-		clawRotator.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-		clawRotator.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
 		clawLeft.setInverted(true);
 		clawRight.setInverted(true);
 		clawRotator.setInverted(true);
@@ -45,10 +42,6 @@ public class IntakeSubsystem extends SubsystemBase {
 	public void stopAll() {
 		setClaw(0);
 		setClawRotator(0);
-	}
-
-	public double getEncoderValue() {
-		return clawRotator.getSelectedSensorPosition();
 	}
 
 	public void setSolenoid(boolean v) {

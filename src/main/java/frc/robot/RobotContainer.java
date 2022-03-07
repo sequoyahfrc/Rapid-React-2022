@@ -40,13 +40,6 @@ public class RobotContainer {
 
 	private void configureDefaultCommands() {
 		driveSubsystem.setDefaultCommand(new DriveCommand(driveSubsystem, controller));
-		// TODO: remove this
-		var c = new InstantCommand(() -> {
-			System.out.println(intakeSubsystem.getEncoderValue());
-			SmartDashboard.putString("DB/String 0", "Encoder: " + intakeSubsystem.getEncoderValue());
-		}, intakeSubsystem);
-		c.addRequirements(intakeSubsystem);
-		// CommandScheduler.getInstance().schedule(c.perpetually());
 	}
 
 	private void configureButtonBindings() {
