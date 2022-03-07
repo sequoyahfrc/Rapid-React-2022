@@ -4,19 +4,30 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-	private final MotorController clawLeft, clawRight, clawRotator;
+	private final MotorController clawLeft, clawRight;
+	private final WPI_TalonSRX clawRotator;
+	private final Solenoid solenoid;
 
 	public IntakeSubsystem(int clawLeftID, int clawRightID, int rotatorID) {
 		clawLeft = new WPI_VictorSPX(clawLeftID);
 		clawRight = new WPI_VictorSPX(clawRightID);
-		clawRotator = new WPI_VictorSPX(rotatorID);
+		clawRotator = new WPI_TalonSRX(rotatorID);
+		solenoid = new Solenoid(0, PneumaticsModuleType.CTREPCM, 6);
+
+		clawRotator.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+		clawRotator.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
 		clawLeft.setInverted(true);
 		clawRight.setInverted(true);
 		clawRotator.setInverted(true);
@@ -34,5 +45,13 @@ public class IntakeSubsystem extends SubsystemBase {
 	public void stopAll() {
 		setClaw(0);
 		setClawRotator(0);
+	}
+
+	public double getEncoderValue() {
+		return clawRotator.getSelectedSensorPosition();
+	}
+
+	public void setSolenoid(boolean v) {
+		solenoid.set(v);
 	}
 }
