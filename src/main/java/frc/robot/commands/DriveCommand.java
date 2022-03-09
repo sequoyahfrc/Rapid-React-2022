@@ -19,6 +19,6 @@ public class DriveCommand extends CommandBase {
 	public void execute() {
 		double l = controller.getRawAxis(XboxController.Axis.kLeftY.value);
 		double r = controller.getRawAxis(XboxController.Axis.kRightY.value);
-		driveSubsystem.tankDrive(l * 0.75, r * 0.75);
+		driveSubsystem.tankDrive(l * l * (l < 0 ? -1 : 1), r * r * (r < 0 ? -1 : 1));
 	}
 }
