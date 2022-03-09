@@ -16,13 +16,14 @@ public class IntakeSubsystem extends SubsystemBase {
 
 	private final MotorController clawLeft, clawRight;
 	private final WPI_TalonSRX clawRotator;
-	private final Solenoid solenoid;
+	private final Solenoid shooterSolenoid, clawSolenoid;
 
-	public IntakeSubsystem(int clawLeftID, int clawRightID, int rotatorID) {
+	public IntakeSubsystem(int clawLeftID, int clawRightID, int rotatorID, int shooterSolenoidID, int clawSolenoidID) {
 		clawLeft = new WPI_VictorSPX(clawLeftID);
 		clawRight = new WPI_VictorSPX(clawRightID);
 		clawRotator = new WPI_TalonSRX(rotatorID);
-		solenoid = new Solenoid(0, PneumaticsModuleType.CTREPCM, 6);
+		shooterSolenoid = new Solenoid(0, PneumaticsModuleType.CTREPCM, shooterSolenoidID);
+		clawSolenoid = new Solenoid(0, PneumaticsModuleType.CTREPCM, clawSolenoidID);
 		clawLeft.setInverted(true);
 		clawRight.setInverted(true);
 		clawRotator.setInverted(true);
@@ -42,7 +43,11 @@ public class IntakeSubsystem extends SubsystemBase {
 		setClawRotator(0);
 	}
 
-	public void setSolenoid(boolean v) {
-		solenoid.set(v);
+	public void setShooterSolenoid(boolean v) {
+		shooterSolenoid.set(v);
+	}
+
+	public void setClawSolenoid(boolean v) {
+		clawSolenoid.set(v);
 	}
 }
