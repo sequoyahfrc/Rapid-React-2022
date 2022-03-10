@@ -32,8 +32,9 @@ public class DriveCommand extends CommandBase {
 		double y;
 		if (x < 0.75) {
 			y = a * x;
+		} else {
+			y = a * b + c * (x - a);
 		}
-		y = a * b + c * (x - a);
 		return y * (neg ? -1 : 1);
 	}
 }
