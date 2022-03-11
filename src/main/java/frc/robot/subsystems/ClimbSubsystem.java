@@ -14,7 +14,7 @@ public class ClimbSubsystem extends SubsystemBase {
 	public ClimbSubsystem(int motorID, int forwardSolID, int reverseSolID) {
 		motor = new WPI_TalonFX(motorID);
 		solenoid = new DoubleSolenoid(0, PneumaticsModuleType.CTREPCM, forwardSolID, reverseSolID);
-		motor.setInverted(true);
+		motor.setInverted(false);
 	}
 
 	public void setMotor(double speed) {
