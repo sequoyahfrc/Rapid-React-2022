@@ -44,10 +44,10 @@ public class RobotContainer {
 
 	private void configureButtonBindings() {
 		XboxControllerButtons buttons = new XboxControllerButtons(controller);
-		buttons.getA()
+		buttons.getX()
 			.whenHeld(new ConsumerStartEndCommand<Double>(Constants.INTAKE_SPEED, 0.0, intakeSubsystem::setClaw,
 				intakeSubsystem));
-		buttons.getB()
+		buttons.getA()
 			.whenPressed(
 				new InstantCommand(() -> intakeSubsystem.setShooterSolenoid(true), intakeSubsystem)
 					.andThen(new WaitCommand(Constants.SHOOT_DELAY))
@@ -57,16 +57,17 @@ public class RobotContainer {
 					.andThen(new InstantCommand(() -> {
 						intakeSubsystem.setClaw(0);
 						intakeSubsystem.setShooterSolenoid(false);
+						intakeSubsystem.setClawSolenoid(false);
 					}, intakeSubsystem)));
-		new Button(() -> controller.getRawAxis(4) > 0.5)
+		new Button(() -> controller.getRawAxis(3) > 0.5)
 			.whenHeld(new ConsumerStartEndCommand<Double>(0.5, 1.0, driveSubsystem::setMultiplier));
 		buttons.getRB()
 			.whenPressed(new InstantCommand(() -> intakeSubsystem.setClawSolenoid(true), intakeSubsystem));
 		buttons.getLB()
 			.whenPressed(new InstantCommand(() -> intakeSubsystem.setClawSolenoid(false), intakeSubsystem));
-		buttons.getX().whenHeld(
-			new ConsumerStartEndCommand<Double>(0.25, 0.0, intakeSubsystem::setClawRotator, intakeSubsystem));
 		buttons.getY().whenHeld(
+			new ConsumerStartEndCommand<Double>(0.25, 0.0, intakeSubsystem::setClawRotator, intakeSubsystem));
+		buttons.getB().whenHeld(
 			new ConsumerStartEndCommand<Double>(-0.35, 0.0, intakeSubsystem::setClawRotator, intakeSubsystem));
 		buttons.getDPadUp()
 			.whenHeld(new ConsumerStartEndCommand<Double>(Constants.CLIMB_SPEED, 0.0, climbSubsystem::setMotor,
