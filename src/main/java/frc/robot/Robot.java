@@ -28,7 +28,7 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
 			new InstantCommand(() -> robotContainer.driveSubsystem.tankDrive(1, 1), robotContainer.driveSubsystem),
-			new WaitCommand(3),
+			new WaitCommand(4),
 			new InstantCommand(() -> robotContainer.driveSubsystem.tankDrive(0, 0), robotContainer.driveSubsystem)));
 	}
 }
