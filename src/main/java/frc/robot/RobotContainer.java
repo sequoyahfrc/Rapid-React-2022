@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.ConsumerStartEndCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.ClimbSubsystem;
@@ -57,6 +58,8 @@ public class RobotContainer {
 						intakeSubsystem.setClaw(0);
 						intakeSubsystem.setShooterSolenoid(false);
 					}, intakeSubsystem)));
+		new Button(() -> controller.getRawAxis(4) > 0.5)
+			.whenHeld(new ConsumerStartEndCommand<Double>(0.5, 1.0, driveSubsystem::setMultiplier));
 		buttons.getRB()
 			.whenPressed(new InstantCommand(() -> intakeSubsystem.setClawSolenoid(true), intakeSubsystem));
 		buttons.getLB()

@@ -19,22 +19,12 @@ public class DriveCommand extends CommandBase {
 	public void execute() {
 		double l = controller.getRawAxis(XboxController.Axis.kLeftY.value);
 		double r = controller.getRawAxis(XboxController.Axis.kRightY.value);
-		driveSubsystem.tankDrive(speedGraph(l), speedGraph(r));
+		driveSubsystem.tankDrive(speedGraph(l) * driveSubsystem.getMultipler(), speedGraph(r)
+			* driveSubsystem.getMultipler());
 	}
 
 	private static double speedGraph(double x) {
 		// Before changing, make sure graph(1) = 1 and graph(-1) = -1
-		final double a = 0.75;
-		final double b = 0.3333333333333333333;
-		final double c = 3.0;
-		boolean neg = x < 0;
-		x = Math.abs(x);
-		double y;
-		if (x < 0.75) {
-			y = a * x;
-		} else {
-			y = a * b + c * (x - a);
-		}
-		return y * (neg ? -1 : 1);
+		return x * x * x;
 	}
 }

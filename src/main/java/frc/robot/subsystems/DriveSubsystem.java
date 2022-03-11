@@ -13,6 +13,7 @@ public class DriveSubsystem<TMotor extends MotorController> extends SubsystemBas
 
 	private final TMotor masterLeft, slaveLeft, masterRight, slaveRight;
 	private final DifferentialDrive drive;
+	private double multiplier = 1.0;
 
 	public DriveSubsystem(int mlID, int slID, int mrID, int srID, MotorCreator<TMotor> factory) {
 		masterLeft = factory.createMotor(mrID);
@@ -38,5 +39,13 @@ public class DriveSubsystem<TMotor extends MotorController> extends SubsystemBas
 	@FunctionalInterface
 	public interface MotorCreator<TMotor> {
 		public abstract TMotor createMotor(int canID);
+	}
+
+	public void setMultiplier(double m) {
+		multiplier = m;
+	}
+
+	public double getMultipler() {
+		return multiplier;
 	}
 }
