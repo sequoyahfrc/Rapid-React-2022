@@ -4,17 +4,17 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-	private final MotorController clawLeft, clawRight;
+	private final WPI_VictorSPX clawLeft, clawRight;
 	private final WPI_TalonSRX clawRotator;
 	private final Solenoid shooterSolenoid, clawSolenoid;
 
@@ -25,13 +25,14 @@ public class IntakeSubsystem extends SubsystemBase {
 		shooterSolenoid = new Solenoid(0, PneumaticsModuleType.CTREPCM, shooterSolenoidID);
 		clawSolenoid = new Solenoid(0, PneumaticsModuleType.CTREPCM, clawSolenoidID);
 		clawLeft.setInverted(true);
-		clawRight.setInverted(true);
+		clawRight.setInverted(false);
 		clawRotator.setInverted(true);
+		clawRotator.setNeutralMode(NeutralMode.Brake);
 	}
 
 	public void setClaw(double speed) {
 		clawLeft.set(speed);
-		clawRight.set(speed);
+		clawRight.set(-speed);
 	}
 
 	public void setClawRotator(double speed) {
@@ -48,6 +49,6 @@ public class IntakeSubsystem extends SubsystemBase {
 	}
 
 	public void setClawSolenoid(boolean v) {
-		clawSolenoid.set(v);
+		clawSolenoid.set(!v);
 	}
 }
