@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class Robot extends TimedRobot {
 	@SuppressWarnings({ "unused", "all" })
@@ -28,7 +28,7 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
 			new InstantCommand(() -> robotContainer.driveSubsystem.tankDrive(1, 1), robotContainer.driveSubsystem),
-			new WaitCommand(4),
+			new WaitUntilCommand(Constants.TAXI_TIME),
 			new InstantCommand(() -> robotContainer.driveSubsystem.tankDrive(0, 0), robotContainer.driveSubsystem)));
 	}
 }
