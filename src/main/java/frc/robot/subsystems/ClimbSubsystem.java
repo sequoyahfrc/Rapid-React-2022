@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -15,6 +16,7 @@ public class ClimbSubsystem extends SubsystemBase {
 		motor = new WPI_TalonFX(motorID);
 		solenoid = new DoubleSolenoid(0, PneumaticsModuleType.CTREPCM, forwardSolID, reverseSolID);
 		motor.setInverted(false);
+		motor.setNeutralMode(NeutralMode.Brake);
 	}
 
 	public void setMotor(double speed) {
