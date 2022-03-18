@@ -8,6 +8,5 @@ public final class Constants {
 	public static final double SHOOT_DELAY = 0.1;
 	public static final double SHOOT_TIME = 1.0;
 	public static final double TAXI_TIME = 7.0;
-	public static final double CLAW_DOWN_TIME = 0.3;
-	public static final double CLAW_UP_TIME = 0.3;
+	public static final boolean IS_D1_USING_XBOX = true; // true = xbox controller, false = ps4 constroller
 }

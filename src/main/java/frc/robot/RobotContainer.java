@@ -24,14 +24,15 @@ public class RobotContainer {
 	public final IntakeSubsystem intakeSubsystem;
 	public final DriveSubsystem<?> driveSubsystem;
 	public final ClimbSubsystem climbSubsystem;
-	private XboxController controller;
-	private Compressor compressor;
+	private final XboxController driver1, driver2;
+	private final Compressor compressor;
 
 	public RobotContainer() {
 		intakeSubsystem = new IntakeSubsystem(4, 5, 6, 6, 7);
 		driveSubsystem = new DriveSubsystem<WPI_TalonFX>(3, 1, 8, 2, WPI_TalonFX::new);
 		climbSubsystem = new ClimbSubsystem(7, 4, 5);
-		controller = new XboxController(0);
+		driver1 = new XboxController(0);
+		driver2 = new XboxController(1);
 		compressor = new Compressor(PneumaticsModuleType.CTREPCM);
 		compressor.enableDigital();
 		configureButtonBindings();
@@ -39,15 +40,17 @@ public class RobotContainer {
 	}
 
 	private void configureDefaultCommands() {
-		driveSubsystem.setDefaultCommand(new DriveCommand(driveSubsystem, controller));
+		driveSubsystem.setDefaultCommand(new DriveCommand(driveSubsystem, driver1));
 	}
 
 	private void configureButtonBindings() {
-		XboxControllerButtons buttons = new XboxControllerButtons(controller);
-		buttons.getX()
+		XboxControllerButtons driver1 = new XboxControllerButtons(this.driver1);
+		XboxControllerButtons driver2 = new XboxControllerButtons(this.driver2);
+		// Intake / Shoot
+		driver2.getA()
 			.whenHeld(new ConsumerStartEndCommand<Double>(Constants.INTAKE_SPEED, 0.0, intakeSubsystem::setClaw,
 				intakeSubsystem));
-		buttons.getA()
+		driver2.getY()
 			.whenPressed(
 				new InstantCommand(() -> intakeSubsystem.setShooterSolenoid(true), intakeSubsystem)
 					.andThen(new WaitCommand(Constants.SHOOT_DELAY))
@@ -55,33 +58,31 @@ public class RobotContainer {
 						intakeSubsystem))
 					.andThen(new WaitCommand(Constants.SHOOT_TIME))
 					.andThen(new InstantCommand(() -> {
-						intakeSubsystem.setClaw(0);
+						intakeSubsystem.stopAll();
 						intakeSubsystem.setShooterSolenoid(false);
 						intakeSubsystem.setClawSolenoid(false);
 					}, intakeSubsystem)));
-		new Button(() -> controller.getRawAxis(3) > 0.5)
-			.whenHeld(new ConsumerStartEndCommand<Double>(0.5, 1.0, driveSubsystem::setMultiplier));
-		buttons.getRB()
+		driver2.getDPadRight()
 			.whenPressed(new InstantCommand(() -> intakeSubsystem.setClawSolenoid(true), intakeSubsystem));
-		buttons.getLB()
+		driver2.getDPadLeft()
 			.whenPressed(new InstantCommand(() -> intakeSubsystem.setClawSolenoid(false), intakeSubsystem));
-		buttons.getY().whenHeld(
+		driver2.getDPadUp().whenHeld(
 			new ConsumerStartEndCommand<Double>(0.25, 0.0, intakeSubsystem::setClawRotator, intakeSubsystem));
-		buttons.getB().whenHeld(
+		driver2.getDPadDown().whenHeld(
 			new ConsumerStartEndCommand<Double>(-0.35, 0.0, intakeSubsystem::setClawRotator, intakeSubsystem));
-		buttons.getDPadUp()
+		// Climb
+		driver1.getDPadUp()
 			.whenHeld(new ConsumerStartEndCommand<Double>(Constants.CLIMB_SPEED, 0.0, climbSubsystem::setMotor,
 				climbSubsystem));
-		buttons.getDPadDown()
+		driver1.getDPadDown()
 			.whenHeld(new ConsumerStartEndCommand<Double>(-Constants.CLIMB_SPEED, 0.0, climbSubsystem::setMotor,
 				climbSubsystem));
-		buttons.getDPadLeft()
-			.whenHeld(new InstantCommand(() -> {
-				climbSubsystem.setSolenoid(Value.kReverse);
-			}, climbSubsystem).perpetually());
-		buttons.getDPadRight()
-			.whenHeld(new InstantCommand(() -> {
-				climbSubsystem.setSolenoid(Value.kForward);
-			}, climbSubsystem).perpetually());
+		driver1.getDPadLeft()
+			.whenPressed(new InstantCommand(() -> climbSubsystem.setSolenoid(Value.kForward), climbSubsystem));
+		driver1.getDPadRight()
+			.whenPressed(new InstantCommand(() -> climbSubsystem.setSolenoid(Value.kReverse), climbSubsystem));
+		// Dont require driveSubsystem here to prevent blocking drive
+		new Button(() -> this.driver1.getRawAxis(Constants.IS_D1_USING_XBOX ? 3 : 4) > 0.5)
+			.whenHeld(new ConsumerStartEndCommand<Double>(0.5, 1.0, driveSubsystem::setMultiplier));
 	}
 }
