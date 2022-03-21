@@ -67,9 +67,11 @@ public class RobotContainer {
 		driver2.getDPadLeft()
 			.whenPressed(new InstantCommand(() -> intakeSubsystem.setClawSolenoid(false), intakeSubsystem));
 		driver2.getDPadUp().whenHeld(
-			new ConsumerStartEndCommand<Double>(0.25, 0.0, intakeSubsystem::setClawRotator, intakeSubsystem));
+			new ConsumerStartEndCommand<Double>(Constants.CLAW_UP_SPEED, 0.0, intakeSubsystem::setClawRotator,
+				intakeSubsystem));
 		driver2.getDPadDown().whenHeld(
-			new ConsumerStartEndCommand<Double>(-0.35, 0.0, intakeSubsystem::setClawRotator, intakeSubsystem));
+			new ConsumerStartEndCommand<Double>(Constants.CLAW_DOWN_SPEED, 0.0, intakeSubsystem::setClawRotator,
+				intakeSubsystem));
 		// Climb
 		driver1.getDPadUp()
 			.whenHeld(new ConsumerStartEndCommand<Double>(Constants.CLIMB_SPEED, 0.0, climbSubsystem::setMotor,
