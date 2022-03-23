@@ -38,6 +38,7 @@ public class Robot extends TimedRobot {
 					.andThen(new ConsumerStartEndCommand<Double>(-1.0, 0.0,
 						robotContainer.driveSubsystem::setBoth,
 						robotContainer.driveSubsystem))
+					// Wait for TAXI_TIME or for auto to end
 					.deadlineWith(new WaitCommand(Constants.TAXI_TIME).raceWith(new WaitUntilCommand(15))));
 	}
 }
