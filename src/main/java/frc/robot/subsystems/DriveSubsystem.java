@@ -35,6 +35,10 @@ public class DriveSubsystem<TMotor extends MotorController> extends SubsystemBas
 		drive.tankDrive(left, right);
 	}
 
+	public void setBoth(double speed) {
+		tankDrive(speed, speed);
+	}
+
 	// Creates a motor with a specified CAN id
 	@FunctionalInterface
 	public interface MotorCreator<TMotor> {
