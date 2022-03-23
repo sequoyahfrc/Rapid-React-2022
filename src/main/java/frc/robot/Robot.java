@@ -7,8 +7,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.commands.ShootCommand;
 
 public class Robot extends TimedRobot {
 	@SuppressWarnings({ "unused", "all" })
@@ -26,9 +27,19 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
-		CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
-			new InstantCommand(() -> robotContainer.driveSubsystem.tankDrive(1, 1), robotContainer.driveSubsystem),
-			new WaitUntilCommand(Constants.TAXI_TIME),
-			new InstantCommand(() -> robotContainer.driveSubsystem.tankDrive(0, 0), robotContainer.driveSubsystem)));
+		CommandScheduler.getInstance().schedule(
+			new InstantCommand(() -> robotContainer.intakeSubsystem.setClaw(Constants.CLAW_DOWN_SPEED * 0.25),
+				robotContainer.intakeSubsystem)
+					.andThen(new WaitCommand(Constants.AUTO_CLAW_DOWN_TIME))
+					.andThen(new InstantCommand(() -> robotContainer.intakeSubsystem.setClaw(0),
+						robotContainer.intakeSubsystem))
+					.andThen(new ShootCommand(robotContainer.intakeSubsystem))
+					.andThen(
+						new InstantCommand(() -> robotContainer.driveSubsystem.tankDrive(1, 1),
+							robotContainer.driveSubsystem))
+					// Wait for TAXI_TIME or for auto to end, just in case
+					.andThen(new WaitCommand(Constants.TAXI_TIME).raceWith(new WaitUntilCommand(15.0)))
+					.andThen(new InstantCommand(() -> robotContainer.driveSubsystem.tankDrive(0, 0),
+						robotContainer.driveSubsystem)));
 	}
 }
