@@ -6,10 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.commands.ConsumerStartEndCommand;
-import frc.robot.commands.ShootCommand;
 
 public class Robot extends TimedRobot {
 	@SuppressWarnings({ "unused", "all" })
@@ -29,16 +27,20 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		CommandScheduler.getInstance().schedule(
 			// Rotate claw
-			new ConsumerStartEndCommand<Double>(Constants.CLAW_DOWN_SPEED * 0.25, 0.0,
-				robotContainer.intakeSubsystem::setClaw, robotContainer.intakeSubsystem)
-					.deadlineWith(new WaitCommand(Constants.AUTO_CLAW_DOWN_TIME))
+			new InstantCommand(() -> robotContainer.intakeSubsystem.setClawRotator(Constants.CLAW_DOWN_SPEED),
+				robotContainer.intakeSubsystem)
+					/// .andThen(new WaitCommand(Constants.AUTO_CLAW_DOWN_TIME))
+					.andThen(new InstantCommand(() -> robotContainer.intakeSubsystem.stopAll(),
+						robotContainer.intakeSubsystem))
+					.andThen(new WaitCommand(Constants.AUTO_SHOOT_DELAY_TIME))
 					// Shoot
-					.andThen(new ShootCommand(robotContainer.intakeSubsystem))
+					// .andThen(new ShootCommand(robotContainer.intakeSubsystem))
 					// Taxi
-					.andThen(new ConsumerStartEndCommand<Double>(-1.0, 0.0,
-						robotContainer.driveSubsystem::setBothSides,
+					.andThen(new InstantCommand(() -> robotContainer.driveSubsystem.setBothSides(0.5),
 						robotContainer.driveSubsystem))
 					// Wait for TAXI_TIME or for auto to end
-					.deadlineWith(new WaitCommand(Constants.TAXI_TIME).raceWith(new WaitUntilCommand(15))));
+					.andThen(new WaitCommand(Constants.TAXI_TIME))
+					.andThen(new InstantCommand(() -> robotContainer.driveSubsystem.setBothSides(0),
+						robotContainer.driveSubsystem)));
 	}
 }
