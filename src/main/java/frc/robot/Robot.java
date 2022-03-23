@@ -28,12 +28,15 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		CommandScheduler.getInstance().schedule(
+			// Rotate claw
 			new InstantCommand(() -> robotContainer.intakeSubsystem.setClaw(Constants.CLAW_DOWN_SPEED * 0.25),
 				robotContainer.intakeSubsystem)
 					.andThen(new WaitCommand(Constants.AUTO_CLAW_DOWN_TIME))
 					.andThen(new InstantCommand(() -> robotContainer.intakeSubsystem.setClaw(0),
 						robotContainer.intakeSubsystem))
+					// Shoot
 					.andThen(new ShootCommand(robotContainer.intakeSubsystem))
+					// Taxi
 					.andThen(
 						new InstantCommand(() -> robotContainer.driveSubsystem.tankDrive(1, 1),
 							robotContainer.driveSubsystem))
