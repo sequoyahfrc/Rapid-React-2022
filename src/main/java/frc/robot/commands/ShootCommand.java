@@ -9,13 +9,14 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class ShootCommand extends SequentialCommandGroup {
 
 	public ShootCommand(IntakeSubsystem intakeSubsystem) {
-		addCommands(new InstantCommand(() -> intakeSubsystem.setShooterSolenoid(true), intakeSubsystem),
-			new WaitCommand(Constants.SHOOT_DELAY),
-			new InstantCommand(() -> intakeSubsystem.setClaw(Constants.SHOOT_SPEED),
-				intakeSubsystem),
-			new WaitCommand(Constants.SHOOT_TIME), new InstantCommand(() -> {
+		addCommands(new InstantCommand(() -> intakeSubsystem.setShooterSolenoid(true), intakeSubsystem)
+			.andThen(new WaitCommand(Constants.SHOOT_DELAY))
+			.andThen(new InstantCommand(() -> intakeSubsystem.setClaw(Constants.SHOOT_SPEED),
+				intakeSubsystem))
+			.andThen(new WaitCommand(Constants.SHOOT_TIME))
+			.andThen(new InstantCommand(() -> {
 				intakeSubsystem.stopAll();
 				intakeSubsystem.setShooterSolenoid(false);
-			}, intakeSubsystem));
+			}, intakeSubsystem)));
 	}
 }
