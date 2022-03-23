@@ -16,14 +16,13 @@ public class IntakeSubsystem extends SubsystemBase {
 
 	private final WPI_VictorSPX clawLeft, clawRight;
 	private final WPI_TalonSRX clawRotator;
-	private final Solenoid shooterSolenoid, clawSolenoid;
+	private final Solenoid shooterSolenoid;
 
-	public IntakeSubsystem(int clawLeftID, int clawRightID, int rotatorID, int shooterSolenoidID, int clawSolenoidID) {
+	public IntakeSubsystem(int clawLeftID, int clawRightID, int rotatorID, int shooterSolenoidID) {
 		clawLeft = new WPI_VictorSPX(clawLeftID);
 		clawRight = new WPI_VictorSPX(clawRightID);
 		clawRotator = new WPI_TalonSRX(rotatorID);
 		shooterSolenoid = new Solenoid(0, PneumaticsModuleType.CTREPCM, shooterSolenoidID);
-		clawSolenoid = new Solenoid(0, PneumaticsModuleType.CTREPCM, clawSolenoidID);
 		clawLeft.setInverted(true);
 		clawRight.setInverted(false);
 		clawRotator.setInverted(true);
@@ -46,9 +45,5 @@ public class IntakeSubsystem extends SubsystemBase {
 
 	public void setShooterSolenoid(boolean v) {
 		shooterSolenoid.set(v);
-	}
-
-	public void setClawSolenoid(boolean v) {
-		clawSolenoid.set(!v);
 	}
 }
