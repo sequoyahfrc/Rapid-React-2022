@@ -31,13 +31,13 @@ public class Robot extends TimedRobot {
 			// Rotate claw
 			new ConsumerStartEndCommand<Double>(Constants.CLAW_DOWN_SPEED * 0.25, 0.0,
 				robotContainer.intakeSubsystem::setClaw, robotContainer.intakeSubsystem)
-					.raceWith(new WaitCommand(Constants.AUTO_CLAW_DOWN_TIME))
+					.deadlineWith(new WaitCommand(Constants.AUTO_CLAW_DOWN_TIME))
 					// Shoot
 					.andThen(new ShootCommand(robotContainer.intakeSubsystem))
 					// Taxi
 					.andThen(new ConsumerStartEndCommand<Double>(-1.0, 0.0,
 						robotContainer.driveSubsystem::setBoth,
 						robotContainer.driveSubsystem))
-					.raceWith(new WaitCommand(Constants.TAXI_TIME).raceWith(new WaitUntilCommand(15))));
+					.deadlineWith(new WaitCommand(Constants.TAXI_TIME).raceWith(new WaitUntilCommand(15))));
 	}
 }
