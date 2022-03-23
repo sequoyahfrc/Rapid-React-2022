@@ -35,7 +35,7 @@ public class DriveSubsystem<TMotor extends MotorController> extends SubsystemBas
 		drive.tankDrive(left, right);
 	}
 
-	public void setBoth(double speed) {
+	public void setBothSides(double speed) {
 		tankDrive(speed, speed);
 	}
 
