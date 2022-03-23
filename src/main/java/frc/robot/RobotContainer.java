@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.ConsumerStartEndCommand;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.ShootCommand;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -28,7 +29,7 @@ public class RobotContainer {
 	private final Compressor compressor;
 
 	public RobotContainer() {
-		intakeSubsystem = new IntakeSubsystem(4, 5, 6, 6, 7);
+		intakeSubsystem = new IntakeSubsystem(4, 5, 6, 6);
 		driveSubsystem = new DriveSubsystem<WPI_TalonFX>(3, 1, 8, 2, WPI_TalonFX::new);
 		climbSubsystem = new ClimbSubsystem(7, 4, 5);
 		driver1 = new XboxController(0);
@@ -50,22 +51,7 @@ public class RobotContainer {
 		driver2.getA()
 			.whenHeld(new ConsumerStartEndCommand<Double>(Constants.INTAKE_SPEED, 0.0, intakeSubsystem::setClaw,
 				intakeSubsystem));
-		driver2.getY()
-			.whenPressed(
-				new InstantCommand(() -> intakeSubsystem.setShooterSolenoid(true), intakeSubsystem)
-					.andThen(new WaitCommand(Constants.SHOOT_DELAY))
-					.andThen(new InstantCommand(() -> intakeSubsystem.setClaw(Constants.SHOOT_SPEED),
-						intakeSubsystem))
-					.andThen(new WaitCommand(Constants.SHOOT_TIME))
-					.andThen(new InstantCommand(() -> {
-						intakeSubsystem.stopAll();
-						intakeSubsystem.setShooterSolenoid(false);
-						intakeSubsystem.setClawSolenoid(false);
-					}, intakeSubsystem)));
-		driver2.getDPadRight()
-			.whenPressed(new InstantCommand(() -> intakeSubsystem.setClawSolenoid(true), intakeSubsystem));
-		driver2.getDPadLeft()
-			.whenPressed(new InstantCommand(() -> intakeSubsystem.setClawSolenoid(false), intakeSubsystem));
+		driver2.getY().whenPressed(new ShootCommand(intakeSubsystem));
 		driver2.getDPadUp().whenHeld(
 			new ConsumerStartEndCommand<Double>(Constants.CLAW_UP_SPEED, 0.0, intakeSubsystem::setClawRotator,
 				intakeSubsystem));
