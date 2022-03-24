@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.ShootCommand;
 
 public class Robot extends TimedRobot {
 	@SuppressWarnings({ "unused", "all" })
@@ -29,12 +30,12 @@ public class Robot extends TimedRobot {
 			// Rotate claw
 			new InstantCommand(() -> robotContainer.intakeSubsystem.setClawRotator(Constants.CLAW_DOWN_SPEED),
 				robotContainer.intakeSubsystem)
-					/// .andThen(new WaitCommand(Constants.AUTO_CLAW_DOWN_TIME))
+					.andThen(new WaitCommand(Constants.AUTO_CLAW_DOWN_TIME))
 					.andThen(new InstantCommand(() -> robotContainer.intakeSubsystem.stopAll(),
 						robotContainer.intakeSubsystem))
 					.andThen(new WaitCommand(Constants.AUTO_SHOOT_DELAY_TIME))
 					// Shoot
-					// .andThen(new ShootCommand(robotContainer.intakeSubsystem))
+					.andThen(new ShootCommand(robotContainer.intakeSubsystem))
 					// Taxi
 					.andThen(new InstantCommand(() -> robotContainer.driveSubsystem.setBothSides(0.5),
 						robotContainer.driveSubsystem))
