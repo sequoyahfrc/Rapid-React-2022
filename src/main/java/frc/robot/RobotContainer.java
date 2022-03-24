@@ -12,20 +12,16 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.Button;
-import frc.robot.commands.ConsumerStartEndCommand;
-import frc.robot.commands.DriveCommand;
-import frc.robot.commands.ShootCommand;
-import frc.robot.subsystems.ClimbSubsystem;
-import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 
 public class RobotContainer {
 
 	public final IntakeSubsystem intakeSubsystem;
 	public final DriveSubsystem<?> driveSubsystem;
 	public final ClimbSubsystem climbSubsystem;
-	private final XboxController driver1, driver2;
-	private final Compressor compressor;
+	public final XboxController driver1, driver2;
+	public final Compressor compressor;
 
 	public RobotContainer() {
 		intakeSubsystem = new IntakeSubsystem(4, 5, 6, 6);
@@ -40,7 +36,6 @@ public class RobotContainer {
 	}
 
 	private void configureDefaultCommands() {
-		driveSubsystem.setDefaultCommand(new DriveCommand(driveSubsystem, driver1));
 	}
 
 	private void configureButtonBindings() {

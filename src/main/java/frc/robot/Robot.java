@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.DriveCommand;
 import frc.robot.commands.ShootCommand;
 
 public class Robot extends TimedRobot {
@@ -43,5 +44,11 @@ public class Robot extends TimedRobot {
 					.andThen(new WaitCommand(Constants.TAXI_TIME))
 					.andThen(new InstantCommand(() -> robotContainer.driveSubsystem.setBothSides(0),
 						robotContainer.driveSubsystem)));
+	}
+
+	@Override
+	public void teleopInit() {
+		robotContainer.driveSubsystem
+			.setDefaultCommand(new DriveCommand(robotContainer.driveSubsystem, robotContainer.driver1));
 	}
 }
