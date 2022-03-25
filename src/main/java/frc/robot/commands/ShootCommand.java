@@ -17,6 +17,6 @@ public class ShootCommand extends SequentialCommandGroup {
 			.andThen(new InstantCommand(() -> {
 				intakeSubsystem.stopAll();
 				intakeSubsystem.setShooterSolenoid(false);
-			}, intakeSubsystem)));
+			})));
 	}
 }
