@@ -28,6 +28,8 @@ public class ClimbSubsystem extends SubsystemBase {
 		solenoid.set(value);
 	}
 
+	// public DoubleSolenoid.Value
+
 	public double getEncoder() {
 		return motor.getSelectedSensorPosition();
 	}
