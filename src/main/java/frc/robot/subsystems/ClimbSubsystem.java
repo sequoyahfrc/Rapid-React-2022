@@ -17,6 +17,7 @@ public class ClimbSubsystem extends SubsystemBase {
 		solenoid = new DoubleSolenoid(0, PneumaticsModuleType.CTREPCM, forwardSolID, reverseSolID);
 		motor.setInverted(false);
 		motor.setNeutralMode(NeutralMode.Brake);
+		resetEncoder();
 	}
 
 	public void setMotor(double speed) {
@@ -25,5 +26,13 @@ public class ClimbSubsystem extends SubsystemBase {
 
 	public void setSolenoid(DoubleSolenoid.Value value) {
 		solenoid.set(value);
+	}
+
+	public double getEncoder() {
+		return motor.getSelectedSensorPosition();
+	}
+
+	public void resetEncoder() {
+		motor.setSelectedSensorPosition(0);
 	}
 }
