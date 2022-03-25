@@ -6,10 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.DriveCommand;
-import frc.robot.commands.ShootCommand;
 
 public class Robot extends TimedRobot {
 	@SuppressWarnings({ "unused", "all" })
@@ -25,25 +22,47 @@ public class Robot extends TimedRobot {
 		CommandScheduler.getInstance().run();
 	}
 
+	private int frameCounter;
+
 	@Override
 	public void autonomousInit() {
-		CommandScheduler.getInstance().schedule(
-			// Rotate claw
-			new InstantCommand(() -> robotContainer.intakeSubsystem.setClawRotator(Constants.CLAW_DOWN_SPEED),
-				robotContainer.intakeSubsystem)
-					.andThen(new WaitCommand(Constants.AUTO_CLAW_DOWN_TIME))
-					.andThen(new InstantCommand(() -> robotContainer.intakeSubsystem.stopAll(),
-						robotContainer.intakeSubsystem))
-					.andThen(new WaitCommand(Constants.AUTO_SHOOT_DELAY_TIME))
-					// Shoot
-					.andThen(new ShootCommand(robotContainer.intakeSubsystem))
-					// Taxi
-					.andThen(new InstantCommand(() -> robotContainer.driveSubsystem.setBothSides(0.5),
-						robotContainer.driveSubsystem))
-					// Wait for TAXI_TIME or for auto to end
-					.andThen(new WaitCommand(Constants.TAXI_TIME))
-					.andThen(new InstantCommand(() -> robotContainer.driveSubsystem.setBothSides(0),
-						robotContainer.driveSubsystem)));
+		frameCounter = 0;
+	}
+
+	@Override
+	public void autonomousPeriodic() {
+		final int FRAME_STOP_CLAW_ROTATOR = (int) (50 * Constants.AUTO_CLAW_DOWN_TIME);
+		final int FRAME_SHOOT_SOL_ON = FRAME_STOP_CLAW_ROTATOR + (int) (50 * Constants.AUTO_SHOOT_DELAY_TIME);
+		final int FRAME_CLAW_ON = FRAME_SHOOT_SOL_ON + (int) (50 * Constants.SHOOT_DELAY);
+		final int FRAME_STOP_SHOOT = FRAME_CLAW_ON + (int) (50 * Constants.SHOOT_TIME);
+		final int FRAME_TAXI_END = FRAME_STOP_SHOOT + (int) (50 * Constants.TAXI_TIME);
+		switch (frameCounter) {
+			case 0:
+				robotContainer.intakeSubsystem.setClawRotator(Constants.CLAW_DOWN_SPEED);
+				break;
+			case FRAME_STOP_CLAW_ROTATOR:
+				robotContainer.intakeSubsystem.setClawRotator(0);
+				break;
+			case FRAME_SHOOT_SOL_ON:
+				robotContainer.intakeSubsystem.setShooterSolenoid(true);
+				break;
+			case FRAME_CLAW_ON:
+				robotContainer.intakeSubsystem.setClaw(Constants.SHOOT_SPEED);
+				break;
+			case FRAME_STOP_SHOOT:
+				robotContainer.intakeSubsystem.stopAll();
+				robotContainer.intakeSubsystem.setShooterSolenoid(false);
+				break;
+		}
+		if (frameCounter >= FRAME_STOP_SHOOT && frameCounter < FRAME_TAXI_END) {
+			robotContainer.driveSubsystem.setBothSides(1);
+		}
+		switch (frameCounter) {
+			case FRAME_TAXI_END:
+				robotContainer.driveSubsystem.setBothSides(0);
+				break;
+		}
+		frameCounter++;
 	}
 
 	@Override
