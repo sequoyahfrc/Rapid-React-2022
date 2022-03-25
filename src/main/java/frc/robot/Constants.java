@@ -7,7 +7,7 @@ public final class Constants {
 	public static final double CLIMB_SPEED = 0.70;
 	public static final double SHOOT_DELAY = 0.1; // Delay between piston and claw activation
 	public static final double SHOOT_TIME = 1.0;
-	public static final double TAXI_TIME = 1.5;
+	public static final double TAXI_TIME = 1.25;
 	public static final boolean IS_D1_USING_XBOX = false; // true = xbox controller, false = ps4 constroller
 	public static final double CLAW_DOWN_SPEED = 0.35;
 	public static final double CLAW_UP_SPEED = -0.35;

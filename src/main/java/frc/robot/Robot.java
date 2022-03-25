@@ -55,7 +55,7 @@ public class Robot extends TimedRobot {
 				break;
 		}
 		if (frameCounter >= FRAME_STOP_SHOOT && frameCounter < FRAME_TAXI_END) {
-			robotContainer.driveSubsystem.setBothSides(1);
+			robotContainer.driveSubsystem.setBothSides(0.5);
 		}
 		switch (frameCounter) {
 			case FRAME_TAXI_END:
