@@ -25,6 +25,6 @@ public class DriveCommand extends CommandBase {
 
 	private static double speedGraph(double x) {
 		// Before changing, make sure graph(1) = 1 and graph(-1) = -1
-		return x * x * x * 0.85;
+		return x * x * x * 0.7;
 	}
 }

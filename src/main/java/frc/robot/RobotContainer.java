@@ -78,13 +78,13 @@ public class RobotContainer {
 		}, climbSubsystem));
 		driver1.getA()
 			.whenPressed(new InstantCommand(() -> climbSubsystem.setMotor(Constants.CLIMB_SPEED), climbSubsystem)
-				.andThen(new WaitUntilCommand(() -> climbSubsystem.getEncoder() > 400000))
+				.andThen(new WaitUntilCommand(() -> climbSubsystem.getEncoder() > 300000))
 				.andThen(
 					new InstantCommand(() -> {
 						climbSubsystem.setMotor(Constants.CLIMB_SPEED * 0.5);
 						SmartDashboard.putString("DB/String 0", "ENCODER: " + climbSubsystem.getEncoder());
 					}, climbSubsystem))
-				.andThen(new WaitUntilCommand(() -> climbSubsystem.getEncoder() >= 509000))
+				.andThen(new WaitUntilCommand(() -> climbSubsystem.getEncoder() >= 368000))
 				.andThen(new InstantCommand(() -> climbSubsystem.setMotor(0), climbSubsystem)));
 	}
 }
