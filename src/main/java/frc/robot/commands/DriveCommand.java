@@ -6,10 +6,10 @@ import frc.robot.subsystems.DriveSubsystem;
 
 public class DriveCommand extends CommandBase {
 
-	private final DriveSubsystem<?> driveSubsystem;
+	private final DriveSubsystem driveSubsystem;
 	private final XboxController controller;
 
-	public DriveCommand(DriveSubsystem<?> driveSubsystem, XboxController controller) {
+	public DriveCommand(DriveSubsystem driveSubsystem, XboxController controller) {
 		this.driveSubsystem = driveSubsystem;
 		this.controller = controller;
 		addRequirements(driveSubsystem);
@@ -25,6 +25,6 @@ public class DriveCommand extends CommandBase {
 
 	private static double speedGraph(double x) {
 		// Before changing, make sure graph(1) = 1 and graph(-1) = -1
-		return x * x * x * 0.7;
+		return x * x * x;
 	}
 }

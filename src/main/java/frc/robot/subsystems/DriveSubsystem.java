@@ -5,30 +5,37 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.FlexibleMotor;
 
-public class DriveSubsystem<TMotor extends MotorController> extends SubsystemBase {
+public class DriveSubsystem extends SubsystemBase {
 
-	private final TMotor masterLeft, slaveLeft, masterRight, slaveRight;
+	private final FlexibleMotor<?> masterLeft, slaveLeft, masterRight, slaveRight;
 	private final DifferentialDrive drive;
 	private double multiplier = 1.0;
 
-	public DriveSubsystem(int mlID, int slID, int mrID, int srID, MotorCreator<TMotor> factory) {
+	public DriveSubsystem(int mlID, int slID, int mrID, int srID, MotorCreator<FlexibleMotor<?>> factory) {
 		masterLeft = factory.createMotor(mrID);
 		slaveLeft = factory.createMotor(slID);
 		masterRight = factory.createMotor(mrID);
 		slaveRight = factory.createMotor(srID);
 
 		drive = new DifferentialDrive(
-			new MotorControllerGroup(masterLeft, slaveLeft),
-			new MotorControllerGroup(masterRight, slaveRight));
+			new MotorControllerGroup(masterLeft.getBaseController(), slaveLeft
+				.getBaseController()),
+			new MotorControllerGroup(masterRight.getBaseController(), slaveRight.getBaseController()));
 
-		masterLeft.setInverted(true);
-		slaveLeft.setInverted(true);
-		masterRight.setInverted(false);
-		slaveRight.setInverted(false);
+		final double LIMIT = 45;
+		masterLeft.limitCurrent(LIMIT);
+		slaveLeft.limitCurrent(LIMIT);
+		masterRight.limitCurrent(LIMIT);
+		slaveRight.limitCurrent(LIMIT);
+
+		masterLeft.getBaseController().setInverted(true);
+		slaveLeft.getBaseController().setInverted(true);
+		masterRight.getBaseController().setInverted(false);
+		slaveRight.getBaseController().setInverted(false);
 	}
 
 	public void tankDrive(double left, double right) {
@@ -41,8 +48,8 @@ public class DriveSubsystem<TMotor extends MotorController> extends SubsystemBas
 
 	// Creates a motor with a specified CAN id
 	@FunctionalInterface
-	public interface MotorCreator<TMotor> {
-		public abstract TMotor createMotor(int canID);
+	public interface MotorCreator<T> {
+		public abstract T createMotor(int canID);
 	}
 
 	public void setMultiplier(double m) {
