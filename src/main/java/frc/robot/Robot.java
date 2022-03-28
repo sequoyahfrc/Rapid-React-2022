@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.PneumaticsControlModule;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.DriveCommand;
@@ -17,6 +19,12 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		robotContainer = new RobotContainer();
 		CameraServer.startAutomaticCapture();
+		try (PowerDistribution pdp = new PowerDistribution()) {
+			pdp.clearStickyFaults();
+		}
+		try (PneumaticsControlModule pcm = new PneumaticsControlModule()) {
+			pcm.clearAllStickyFaults();
+		}
 	}
 
 	@Override
