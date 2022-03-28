@@ -26,7 +26,7 @@ public class DriveSubsystem extends SubsystemBase {
 				.getBaseController()),
 			new MotorControllerGroup(masterRight.getBaseController(), slaveRight.getBaseController()));
 
-		final double LIMIT = 45;
+		final double LIMIT = 40;
 		masterLeft.limitCurrent(LIMIT);
 		slaveLeft.limitCurrent(LIMIT);
 		masterRight.limitCurrent(LIMIT);
