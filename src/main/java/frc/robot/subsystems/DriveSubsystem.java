@@ -16,7 +16,7 @@ public class DriveSubsystem<TMotor extends MotorController> extends SubsystemBas
 	private double multiplier = 1.0;
 
 	public DriveSubsystem(int mlID, int slID, int mrID, int srID, MotorCreator<TMotor> factory) {
-		masterLeft = factory.createMotor(mrID);
+		masterLeft = factory.createMotor(mlID);
 		slaveLeft = factory.createMotor(slID);
 		masterRight = factory.createMotor(mrID);
 		slaveRight = factory.createMotor(srID);
