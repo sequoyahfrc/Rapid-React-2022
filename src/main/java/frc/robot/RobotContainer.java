@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.Compressor;
@@ -20,27 +19,14 @@ import frc.robot.subsystems.*;
 public class RobotContainer {
 
 	public final IntakeSubsystem intakeSubsystem;
-	public final DriveSubsystem driveSubsystem;
+	public final DriveSubsystem<?> driveSubsystem;
 	public final ClimbSubsystem climbSubsystem;
 	public final XboxController driver1, driver2;
 	public final Compressor compressor;
 
 	public RobotContainer() {
 		intakeSubsystem = new IntakeSubsystem(4, 5, 6, 6);
-		driveSubsystem = new DriveSubsystem(3, 1, 8, 2, id -> new FlexibleMotor<WPI_TalonFX>() {
-			private final WPI_TalonFX motor = new WPI_TalonFX(id);
-
-			@Override
-			public WPI_TalonFX getBaseController() {
-				return motor;
-			}
-
-			@Override
-			public void limitCurrent(double limit) {
-				motor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, limit, limit + 5, 0.125));
-			}
-
-		});
+		driveSubsystem = new DriveSubsystem<WPI_TalonFX>(3, 1, 8, 2, WPI_TalonFX::new);
 		climbSubsystem = new ClimbSubsystem(7, 4, 5);
 		driver1 = new XboxController(0);
 		driver2 = new XboxController(1);
