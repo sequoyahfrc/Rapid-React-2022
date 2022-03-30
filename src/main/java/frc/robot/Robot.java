@@ -47,27 +47,24 @@ public class Robot extends TimedRobot {
 			case SHOOTER_DOWN:
 				int pos = robotContainer.intakeSubsystem.isInAngleRange(Constants.CLAW_ANGLE,
 					Constants.CLAW_ANGLE_ERROR);
-				if (pos == 0) {
+				if (pos < 0) {
+					robotContainer.intakeSubsystem.setClawRotator(Constants.CLAW_DOWN_SPEED);
+				} else if (pos > 0) {
+					robotContainer.intakeSubsystem.setClawRotator(Constants.CLAW_UP_SPEED);
+				} else {
 					state = AutoState.SHOOT;
 					frameCounter = 0;
+					robotContainer.intakeSubsystem.setClawRotator(0);
 				}
 				break;
 			case SHOOT:
-				final int FRAME_STOP_CLAW_ROTATOR = (int) (50 *
-					Constants.AUTO_CLAW_DOWN_TIME);
-				final int FRAME_SHOOT_SOL_ON = FRAME_STOP_CLAW_ROTATOR + (int) (50 *
+				final int FRAME_SHOOT_SOL_ON = (int) (50 *
 					Constants.AUTO_SHOOT_DELAY_TIME);
 				final int FRAME_CLAW_ON = FRAME_SHOOT_SOL_ON + (int) (50 *
 					Constants.SHOOT_DELAY);
 				final int FRAME_STOP_SHOOT = FRAME_CLAW_ON + (int) (50 *
 					Constants.SHOOT_TIME);
 				switch (frameCounter) {
-					case 0:
-						robotContainer.intakeSubsystem.setClawRotator(Constants.CLAW_DOWN_SPEED);
-						break;
-					case FRAME_STOP_CLAW_ROTATOR:
-						robotContainer.intakeSubsystem.setClawRotator(0);
-						break;
 					case FRAME_SHOOT_SOL_ON:
 						robotContainer.intakeSubsystem.setShooterSolenoid(true);
 						break;
