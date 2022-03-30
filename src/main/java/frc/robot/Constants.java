@@ -14,4 +14,7 @@ public final class Constants {
 	public static final double AUTO_CLAW_DOWN_TIME = 1.20; // 1.25
 	public static final double AUTO_SHOOT_DELAY_TIME = 0.5;
 	public static final double CLIMBER_FORWARD_MAX = 512000;
+	public static final double CTRE_MAG_ENCODER_RAW_TO_ROTATIONS = 4096.0;
+	public static final double CLAW_ANGLE = -82.5;
+	public static final double CLAW_ANGLE_ERROR = 2.5;
 }

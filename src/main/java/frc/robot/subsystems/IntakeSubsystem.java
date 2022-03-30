@@ -10,7 +10,10 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -27,6 +30,9 @@ public class IntakeSubsystem extends SubsystemBase {
 		clawRight.setInverted(false);
 		clawRotator.setInverted(true);
 		clawRotator.setNeutralMode(NeutralMode.Brake);
+		setDefaultCommand(new InstantCommand(() -> {
+			SmartDashboard.putString("DB/String 1", "Claw: " + getEncoder());
+		}, this).perpetually());
 	}
 
 	public void setClaw(double speed) {
@@ -45,5 +51,26 @@ public class IntakeSubsystem extends SubsystemBase {
 
 	public void setShooterSolenoid(boolean v) {
 		shooterSolenoid.set(v);
+	}
+
+	public double getEncoder() {
+		return clawRotator.getSelectedSensorPosition();
+	}
+
+	public void resetEncoder() {
+		clawRotator.setSelectedSensorPosition(0);
+	}
+
+	public double getAngle() {
+		return getEncoder() / Constants.CTRE_MAG_ENCODER_RAW_TO_ROTATIONS * 360.0;
+	}
+
+	public int isInAngleRange(double target, double error) {
+		double angle = getAngle();
+		double x = target - angle;
+		if (Math.abs(x) < error) {
+			return 0;
+		}
+		return (int) Math.copySign(1, x);
 	}
 }

@@ -8,7 +8,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.*;
@@ -53,6 +52,7 @@ public class RobotContainer {
 		driver2.getDPadDown().whenHeld(
 			new ConsumerStartEndCommand<Double>(Constants.CLAW_DOWN_SPEED, 0.0, intakeSubsystem::setClawRotator,
 				intakeSubsystem));
+		driver2.getX().whenPressed(new MoveClawToTargetRangeCommand(intakeSubsystem));
 		// Climb
 		driver1.getDPadUp()
 			.whenHeld(new ConsumerStartEndCommand<Double>(Constants.CLIMB_SPEED, 0.0, climbSubsystem::setMotor,
@@ -70,19 +70,15 @@ public class RobotContainer {
 		new Button(() -> this.driver1.getRawAxis(Constants.IS_D1_USING_XBOX ? 3 : 4) > 0.5)
 			.whenHeld(new ConsumerStartEndCommand<Double>(0.5, 1.0, driveSubsystem::setMultiplier));
 
-		driver1.getX().whenPressed(new InstantCommand(() -> {
-			SmartDashboard.putString("DB/String 0", "ENCODER: " + climbSubsystem.getEncoder());
-		}));
 		driver1.getY().whenPressed(new InstantCommand(() -> {
-			climbSubsystem.resetEncoder();
-		}, climbSubsystem));
+			intakeSubsystem.resetEncoder();
+		}, intakeSubsystem));
 		driver1.getA()
 			.whenPressed(new InstantCommand(() -> climbSubsystem.setMotor(Constants.CLIMB_SPEED), climbSubsystem)
 				.andThen(new WaitUntilCommand(() -> climbSubsystem.getEncoder() > 300000))
 				.andThen(
 					new InstantCommand(() -> {
 						climbSubsystem.setMotor(Constants.CLIMB_SPEED * 0.5);
-						SmartDashboard.putString("DB/String 0", "ENCODER: " + climbSubsystem.getEncoder());
 					}, climbSubsystem))
 				.andThen(new WaitUntilCommand(() -> climbSubsystem.getEncoder() >= 368000))
 				.andThen(new InstantCommand(() -> climbSubsystem.setMotor(0), climbSubsystem)));
