@@ -69,8 +69,4 @@ public class Robot extends TimedRobot {
 		robotContainer.driveSubsystem
 			.setDefaultCommand(new DriveCommand(robotContainer.driveSubsystem, robotContainer.driver1));
 	}
-
-	public static enum AutoState {
-		SHOOTER_DOWN, SHOOT, TAXI;
-	}
 }
