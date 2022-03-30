@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.auto.IStep;
+import frc.robot.auto.*;
 import frc.robot.commands.DriveCommand;
 
 public class Robot extends TimedRobot {
@@ -32,63 +34,34 @@ public class Robot extends TimedRobot {
 		CommandScheduler.getInstance().run();
 	}
 
-	private int frameCounter;
-	private AutoState state;
+	private IStep[] steps;
+	private int stepIndex;
+	private boolean didInit;
 
 	@Override
 	public void autonomousInit() {
-		frameCounter = 0;
-		state = AutoState.SHOOTER_DOWN;
+		stepIndex = 0;
+		steps = new IStep[] {
+			new ShooterDownStep(robotContainer.intakeSubsystem),
+			new ShootStep(robotContainer.intakeSubsystem),
+			new TaxiStep(robotContainer.driveSubsystem)
+		};
+		didInit = false;
 	}
 
 	@Override
 	public void autonomousPeriodic() {
-		switch (state) {
-			case SHOOTER_DOWN:
-				int pos = robotContainer.intakeSubsystem.isInAngleRange(Constants.CLAW_ANGLE,
-					Constants.CLAW_ANGLE_ERROR);
-				if (pos < 0) {
-					robotContainer.intakeSubsystem.setClawRotator(Constants.CLAW_DOWN_SPEED);
-				} else if (pos > 0) {
-					robotContainer.intakeSubsystem.setClawRotator(Constants.CLAW_UP_SPEED);
-				} else {
-					state = AutoState.SHOOT;
-					frameCounter = 0;
-					robotContainer.intakeSubsystem.setClawRotator(0);
-				}
-				break;
-			case SHOOT:
-				final int FRAME_SHOOT_SOL_ON = (int) (50 *
-					Constants.AUTO_SHOOT_DELAY_TIME);
-				final int FRAME_CLAW_ON = FRAME_SHOOT_SOL_ON + (int) (50 *
-					Constants.SHOOT_DELAY);
-				final int FRAME_STOP_SHOOT = FRAME_CLAW_ON + (int) (50 *
-					Constants.SHOOT_TIME);
-				switch (frameCounter) {
-					case FRAME_SHOOT_SOL_ON:
-						robotContainer.intakeSubsystem.setShooterSolenoid(true);
-						break;
-					case FRAME_CLAW_ON:
-						robotContainer.intakeSubsystem.setClaw(Constants.SHOOT_SPEED);
-						break;
-					case FRAME_STOP_SHOOT:
-						robotContainer.intakeSubsystem.stopAll();
-						robotContainer.intakeSubsystem.setShooterSolenoid(false);
-						frameCounter = 0;
-						state = AutoState.TAXI;
-						break;
-				}
-				break;
-			case TAXI:
-				final int FRAME_TAXI_STOP = (int) (50 * Constants.TAXI_TIME);
-				if (frameCounter < FRAME_TAXI_STOP) {
-					robotContainer.driveSubsystem.setBothSides(0.5);
-				} else {
-					robotContainer.driveSubsystem.setBothSides(0);
-				}
-				break;
+		if (stepIndex >= steps.length) {
+			return;
 		}
-		frameCounter++;
+		if (!didInit) {
+			steps[stepIndex].init();
+			didInit = true;
+		} else if (!steps[stepIndex].periodic()) {
+			steps[stepIndex].end();
+			stepIndex++;
+			didInit = false;
+		}
 	}
 
 	@Override
