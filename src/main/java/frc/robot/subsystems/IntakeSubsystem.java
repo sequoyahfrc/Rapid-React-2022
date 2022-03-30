@@ -32,6 +32,7 @@ public class IntakeSubsystem extends SubsystemBase {
 		clawRotator.setNeutralMode(NeutralMode.Brake);
 		setDefaultCommand(new InstantCommand(() -> {
 			SmartDashboard.putString("DB/String 1", "Claw: " + getEncoder());
+			SmartDashboard.putString("DB/String 2", "CA : " + intakeSubsystem.getAngle());
 		}, this).perpetually());
 	}
 

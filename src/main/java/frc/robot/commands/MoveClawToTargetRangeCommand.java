@@ -18,7 +18,6 @@ public class MoveClawToTargetRangeCommand extends CommandBase {
 
 	@Override
 	public void execute() {
-		SmartDashboard.putString("DB/String 2", "CA : " + intakeSubsystem.getAngle());
 		if (position < 0) {
 			intakeSubsystem.setClawRotator(Constants.CLAW_DOWN_SPEED);
 		} else {

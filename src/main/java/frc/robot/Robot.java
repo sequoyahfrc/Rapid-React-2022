@@ -33,43 +33,62 @@ public class Robot extends TimedRobot {
 	}
 
 	private int frameCounter;
+	private AutoState state;
 
 	@Override
 	public void autonomousInit() {
 		frameCounter = 0;
+		state = AutoState.SHOOTER_DOWN;
 	}
 
 	@Override
 	public void autonomousPeriodic() {
-		final int FRAME_STOP_CLAW_ROTATOR = (int) (50 * Constants.AUTO_CLAW_DOWN_TIME);
-		final int FRAME_SHOOT_SOL_ON = FRAME_STOP_CLAW_ROTATOR + (int) (50 * Constants.AUTO_SHOOT_DELAY_TIME);
-		final int FRAME_CLAW_ON = FRAME_SHOOT_SOL_ON + (int) (50 * Constants.SHOOT_DELAY);
-		final int FRAME_STOP_SHOOT = FRAME_CLAW_ON + (int) (50 * Constants.SHOOT_TIME);
-		final int FRAME_TAXI_END = FRAME_STOP_SHOOT + (int) (50 * Constants.TAXI_TIME);
-		switch (frameCounter) {
-			case 0:
-				robotContainer.intakeSubsystem.setClawRotator(Constants.CLAW_DOWN_SPEED);
+		switch (state) {
+			case SHOOTER_DOWN:
+				int pos = robotContainer.intakeSubsystem.isInAngleRange(Constants.CLAW_ANGLE,
+					Constants.CLAW_ANGLE_ERROR);
+				if (pos == 0) {
+					state = AutoState.SHOOT;
+					frameCounter = 0;
+				}
 				break;
-			case FRAME_STOP_CLAW_ROTATOR:
-				robotContainer.intakeSubsystem.setClawRotator(0);
+			case SHOOT:
+				final int FRAME_STOP_CLAW_ROTATOR = (int) (50 *
+					Constants.AUTO_CLAW_DOWN_TIME);
+				final int FRAME_SHOOT_SOL_ON = FRAME_STOP_CLAW_ROTATOR + (int) (50 *
+					Constants.AUTO_SHOOT_DELAY_TIME);
+				final int FRAME_CLAW_ON = FRAME_SHOOT_SOL_ON + (int) (50 *
+					Constants.SHOOT_DELAY);
+				final int FRAME_STOP_SHOOT = FRAME_CLAW_ON + (int) (50 *
+					Constants.SHOOT_TIME);
+				switch (frameCounter) {
+					case 0:
+						robotContainer.intakeSubsystem.setClawRotator(Constants.CLAW_DOWN_SPEED);
+						break;
+					case FRAME_STOP_CLAW_ROTATOR:
+						robotContainer.intakeSubsystem.setClawRotator(0);
+						break;
+					case FRAME_SHOOT_SOL_ON:
+						robotContainer.intakeSubsystem.setShooterSolenoid(true);
+						break;
+					case FRAME_CLAW_ON:
+						robotContainer.intakeSubsystem.setClaw(Constants.SHOOT_SPEED);
+						break;
+					case FRAME_STOP_SHOOT:
+						robotContainer.intakeSubsystem.stopAll();
+						robotContainer.intakeSubsystem.setShooterSolenoid(false);
+						frameCounter = 0;
+						state = AutoState.TAXI;
+						break;
+				}
 				break;
-			case FRAME_SHOOT_SOL_ON:
-				robotContainer.intakeSubsystem.setShooterSolenoid(true);
-				break;
-			case FRAME_CLAW_ON:
-				robotContainer.intakeSubsystem.setClaw(Constants.SHOOT_SPEED);
-				break;
-			case FRAME_STOP_SHOOT:
-				robotContainer.intakeSubsystem.stopAll();
-				robotContainer.intakeSubsystem.setShooterSolenoid(false);
-				break;
-		}
-		if (frameCounter >= FRAME_STOP_SHOOT && frameCounter < FRAME_TAXI_END) {
-			robotContainer.driveSubsystem.setBothSides(0.5);
-		}
-		switch (frameCounter) {
-			case FRAME_TAXI_END:
-				robotContainer.driveSubsystem.setBothSides(0);
+			case TAXI:
+				final int FRAME_TAXI_STOP = (int) (50 * Constants.TAXI_TIME);
+				if (frameCounter < FRAME_TAXI_STOP) {
+					robotContainer.driveSubsystem.setBothSides(0.5);
+				} else {
+					robotContainer.driveSubsystem.setBothSides(0);
+				}
 				break;
 		}
 		frameCounter++;
@@ -79,5 +98,9 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
 		robotContainer.driveSubsystem
 			.setDefaultCommand(new DriveCommand(robotContainer.driveSubsystem, robotContainer.driver1));
+	}
+
+	public static enum AutoState {
+		SHOOTER_DOWN, SHOOT, TAXI;
 	}
 }
