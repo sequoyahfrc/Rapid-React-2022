@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -27,6 +28,7 @@ public class RobotContainer {
 	public final ClimbSubsystem climbSubsystem;
 	public final XboxController driver1, driver2;
 	public final Compressor compressor;
+	private NetworkTableEntry dashboardPressure;
 
 	public RobotContainer() {
 		intakeSubsystem = new IntakeSubsystem(4, 5, 6, 6, 3, 9);
@@ -38,6 +40,14 @@ public class RobotContainer {
 		compressor.enableDigital();
 		configureButtonBindings();
 		configureDefaultCommands();
+	}
+
+	public void periodic() {
+		if (dashboardPressure == null) {
+			dashboardPressure = Constants.getEntry("Pressure");
+			return;
+		}
+		dashboardPressure.setDouble(compressor.getPressure());
 	}
 
 	private void configureDefaultCommands() {
