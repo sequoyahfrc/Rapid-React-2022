@@ -8,7 +8,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -21,8 +20,6 @@ public class IntakeSubsystem extends SubsystemBase {
 	private final WPI_TalonSRX clawRotator;
 	private final Solenoid shooterSolenoid, clawSolenoid;
 	private final DigitalInput limitSwitch;
-	private NetworkTableEntry dashboardClawAngle;
-	private NetworkTableEntry dashboardHasBall;
 
 	public IntakeSubsystem(int clawLeftID, int clawRightID, int rotatorID, int shooterSolenoidID, int clawSolenoidID,
 		int limitSwitchPin) {
@@ -41,16 +38,6 @@ public class IntakeSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		setClawSolenoid(getLimitSwitch());
-		if (dashboardClawAngle == null) {
-			dashboardClawAngle = Constants.getEntry("Claw Angle");
-			return;
-		}
-		if (dashboardHasBall == null) {
-			dashboardHasBall = Constants.getEntry("Has Ball?");
-			return;
-		}
-		dashboardClawAngle.setDouble(getAngle());
-		dashboardHasBall.setBoolean(getLimitSwitch());
 	}
 
 	public void setClaw(double speed) {

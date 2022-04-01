@@ -1,10 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
-import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
-
 public final class Constants {
 
 	public static final double INTAKE_SPEED = 0.35;
@@ -22,14 +17,4 @@ public final class Constants {
 	public static final double CTRE_MAG_ENCODER_RAW_TO_ROTATIONS = 4096.0;
 	public static final double CLAW_ANGLE = -82.5;
 	public static final double CLAW_ANGLE_ERROR = 2.5;
-	public static final String TAB_NAME = "Dashboard";
-
-	public static NetworkTableEntry getEntry(String n) {
-		ShuffleboardComponent<?> c = Shuffleboard.getTab(TAB_NAME)
-			.getLayout(n);
-		if (c instanceof SimpleWidget) {
-			return ((SimpleWidget) c).getEntry();
-		}
-		return null;
-	}
 }
