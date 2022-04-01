@@ -77,7 +77,8 @@ public class RobotContainer {
 
 		driver1.getY().whenPressed(new InstantCommand(() -> {
 			intakeSubsystem.resetEncoder();
-		}, intakeSubsystem));
+			climbSubsystem.resetEncoder();
+		}, intakeSubsystem, climbSubsystem));
 		driver1.getA()
 			.whenPressed(new InstantCommand(() -> climbSubsystem.setMotor(Constants.CLIMB_SPEED), climbSubsystem)
 				.andThen(new WaitUntilCommand(() -> climbSubsystem.getEncoder() > 300000))
