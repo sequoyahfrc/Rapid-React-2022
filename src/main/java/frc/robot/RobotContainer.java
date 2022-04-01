@@ -69,7 +69,8 @@ public class RobotContainer {
 			// Intake
 			ShuffleboardContainer intake = tab.getLayout("Intake", BuiltInLayouts.kGrid)
 				.withPosition(4, 0)
-				.withSize(2, 2);
+				.withSize(2, 2)
+				.withProperties(Map.of("Number of columns", 2, "Number of rows", 1));
 			intake.addBoolean("Has Ball?", intakeSubsystem::getLimitSwitch)
 				.withPosition(0, 0)
 				.withSize(1, 1);
@@ -77,14 +78,14 @@ public class RobotContainer {
 				.withPosition(1, 0)
 				.withSize(1, 1)
 				.withWidget(BuiltInWidgets.kDial)
-				.withProperties(Map.of("Min", "-360", "Max", "360"));
+				.withProperties(Map.of("Min", -360.0, "Max", 360.0));
 
 			// Climber
 			tab.addNumber("Climb Encoder", climbSubsystem::getEncoder)
 				.withWidget(BuiltInWidgets.kNumberBar)
 				.withPosition(4, 2)
 				.withSize(2, 1)
-				.withProperties(Map.of("Min", "0", "Max", "1000000"));
+				.withProperties(Map.of("Min", 0.0, "Max", 1000000.0));
 
 			// Other
 			tab.add("PDP", pdp)
@@ -95,7 +96,7 @@ public class RobotContainer {
 				.withWidget(BuiltInWidgets.kNumberBar)
 				.withPosition(6, 2)
 				.withSize(3, 1)
-				.withProperties(Map.of("Min", "0", "Max", "120"));
+				.withProperties(Map.of("Min", 0.0, "Max", 120.0));
 		}
 
 	}
