@@ -29,11 +29,6 @@ public class Robot extends TimedRobot {
 		}
 	}
 
-	@Override
-	public void robotPeriodic() {
-		CommandScheduler.getInstance().run();
-	}
-
 	private IStep[] steps;
 	private int stepIndex;
 	private boolean didInit;
@@ -68,5 +63,10 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
 		robotContainer.driveSubsystem
 			.setDefaultCommand(new DriveCommand(robotContainer.driveSubsystem, robotContainer.driver1));
+	}
+
+	@Override
+	public void teleopPeriodic() {
+		CommandScheduler.getInstance().run();
 	}
 }
