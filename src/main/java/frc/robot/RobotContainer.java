@@ -45,7 +45,7 @@ public class RobotContainer {
 	}
 
 	public void periodic() {
-		SmartDashboard.putString("DB/String 2", "Pressure:");
+		SmartDashboard.putString("DB/String 2", "Pressure");
 		SmartDashboard.putString("DB/String 7", "" + compressor.getPressure());
 	}
 
