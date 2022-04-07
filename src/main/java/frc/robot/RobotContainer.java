@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.Compressor;
@@ -25,7 +26,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class RobotContainer {
 
 	public final IntakeSubsystem intakeSubsystem;
-	public final DriveSubsystem<?> driveSubsystem;
+	public final DriveSubsystem<WPI_TalonFX> driveSubsystem;
 	public final ClimbSubsystem climbSubsystem;
 	public final XboxController driver1, driver2;
 	public final Compressor compressor;
@@ -33,7 +34,8 @@ public class RobotContainer {
 
 	public RobotContainer() {
 		intakeSubsystem = new IntakeSubsystem(4, 5, 6, 6, 3, 9);
-		driveSubsystem = new DriveSubsystem<WPI_TalonFX>(3, 1, 8, 2, WPI_TalonFX::new);
+		driveSubsystem = new DriveSubsystem<WPI_TalonFX>(3, 1, 8, 2, WPI_TalonFX::new,
+			m -> m.setNeutralMode(NeutralMode.Coast));
 		climbSubsystem = new ClimbSubsystem(7, 4, 5);
 		driver1 = new XboxController(0);
 		driver2 = new XboxController(1);
