@@ -37,6 +37,7 @@ public class ShootStep implements IStep {
 				intakeSubsystem.setShooterSolenoid(false);
 				return false;
 		}
+		frameCounter++;
 		return true;
 	}
 }
