@@ -27,7 +27,6 @@ public class Robot extends TimedRobot {
 		try (PneumaticsControlModule pcm = new PneumaticsControlModule()) {
 			pcm.clearAllStickyFaults();
 		}
-	}
 
 	private IStep[] steps;
 	private int stepIndex;

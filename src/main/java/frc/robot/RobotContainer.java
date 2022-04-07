@@ -4,38 +4,54 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
-import frc.robot.commands.*;
-import frc.robot.subsystems.*;
+import frc.robot.commands.ConsumerStartEndCommand;
+import frc.robot.commands.MoveClawToTargetRangeCommand;
+import frc.robot.commands.ShootCommand;
+import frc.robot.subsystems.ClimbSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 
 public class RobotContainer {
 
 	public final IntakeSubsystem intakeSubsystem;
-	public final DriveSubsystem<?> driveSubsystem;
+	public final DriveSubsystem<WPI_TalonFX> driveSubsystem;
 	public final ClimbSubsystem climbSubsystem;
 	public final XboxController driver1, driver2;
 	public final Compressor compressor;
+	public final PneumaticsControlModule pcm;
 
 	public RobotContainer() {
-		intakeSubsystem = new IntakeSubsystem(4, 5, 6, 6);
-		driveSubsystem = new DriveSubsystem<WPI_TalonFX>(3, 1, 8, 2, WPI_TalonFX::new);
+		intakeSubsystem = new IntakeSubsystem(4, 5, 6, 6, 3, 9);
+		driveSubsystem = new DriveSubsystem<WPI_TalonFX>(3, 1, 8, 2, WPI_TalonFX::new,
+			m -> m.setNeutralMode(NeutralMode.Coast));
 		climbSubsystem = new ClimbSubsystem(7, 4, 5);
 		driver1 = new XboxController(0);
 		driver2 = new XboxController(1);
 		compressor = new Compressor(PneumaticsModuleType.CTREPCM);
 		compressor.enableDigital();
+		pcm = new PneumaticsControlModule();
 		configureButtonBindings();
 		configureDefaultCommands();
 	}
 
 	private void configureDefaultCommands() {
+	}
+
+	public void periodic() {
+		SmartDashboard.putString("DB/String 2", "Pressure");
+		SmartDashboard.putString("DB/String 7", "" + pcm.getPressure(0));
 	}
 
 	private void configureButtonBindings() {
@@ -72,7 +88,8 @@ public class RobotContainer {
 
 		driver1.getY().whenPressed(new InstantCommand(() -> {
 			intakeSubsystem.resetEncoder();
-		}, intakeSubsystem));
+			climbSubsystem.resetEncoder();
+		}, intakeSubsystem, climbSubsystem));
 		driver1.getA()
 			.whenPressed(new InstantCommand(() -> climbSubsystem.setMotor(Constants.CLIMB_SPEED), climbSubsystem)
 				.andThen(new WaitUntilCommand(() -> climbSubsystem.getEncoder() > 300000))

@@ -8,10 +8,10 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -19,21 +19,29 @@ public class IntakeSubsystem extends SubsystemBase {
 
 	private final WPI_VictorSPX clawLeft, clawRight;
 	private final WPI_TalonSRX clawRotator;
-	private final Solenoid shooterSolenoid;
+	private final Solenoid shooterSolenoid, clawSolenoid;
+	private final DigitalInput limitSwitch;
 
-	public IntakeSubsystem(int clawLeftID, int clawRightID, int rotatorID, int shooterSolenoidID) {
+	public IntakeSubsystem(int clawLeftID, int clawRightID, int rotatorID, int shooterSolenoidID, int clawSolenoidID,
+		int limitSwitchPin) {
 		clawLeft = new WPI_VictorSPX(clawLeftID);
 		clawRight = new WPI_VictorSPX(clawRightID);
 		clawRotator = new WPI_TalonSRX(rotatorID);
 		shooterSolenoid = new Solenoid(0, PneumaticsModuleType.CTREPCM, shooterSolenoidID);
+		clawSolenoid = new Solenoid(0, PneumaticsModuleType.CTREPCM, clawSolenoidID);
 		clawLeft.setInverted(true);
 		clawRight.setInverted(false);
 		clawRotator.setInverted(true);
 		clawRotator.setNeutralMode(NeutralMode.Brake);
-		setDefaultCommand(new InstantCommand(() -> {
-			SmartDashboard.putString("DB/String 1", "Claw: " + getEncoder());
-			SmartDashboard.putString("DB/String 2", "CA : " + getAngle());
-		}, this).perpetually());
+		limitSwitch = new DigitalInput(limitSwitchPin);
+	}
+
+	@Override
+	public void periodic() {
+		setClawSolenoid(getLimitSwitch());
+		SmartDashboard.putBoolean("DB/LED 0", getLimitSwitch());
+		SmartDashboard.putString("DB/String 1", "Claw Angle");
+		SmartDashboard.putString("DB/String 6", "" + getAngle());
 	}
 
 	public void setClaw(double speed) {
@@ -52,6 +60,18 @@ public class IntakeSubsystem extends SubsystemBase {
 
 	public void setShooterSolenoid(boolean v) {
 		shooterSolenoid.set(v);
+	}
+
+	public boolean getShooterSoldnoid() {
+		return clawSolenoid.get();
+	}
+
+	public void setClawSolenoid(boolean v) {
+		clawSolenoid.set(v);
+	}
+
+	public boolean getClawSoldnoid() {
+		return shooterSolenoid.get();
 	}
 
 	public double getEncoder() {
@@ -73,5 +93,9 @@ public class IntakeSubsystem extends SubsystemBase {
 			return 0;
 		}
 		return (int) Math.copySign(1, x);
+	}
+
+	public boolean getLimitSwitch() {
+		return !limitSwitch.get();
 	}
 }

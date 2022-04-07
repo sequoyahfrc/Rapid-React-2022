@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.Consumer;
+
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -11,11 +13,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem<TMotor extends MotorController> extends SubsystemBase {
 
-	private final TMotor masterLeft, slaveLeft, masterRight, slaveRight;
+	public final TMotor masterLeft, slaveLeft, masterRight, slaveRight;
 	private final DifferentialDrive drive;
 	private double multiplier = 1.0;
 
-	public DriveSubsystem(int mlID, int slID, int mrID, int srID, MotorCreator<TMotor> factory) {
+	public DriveSubsystem(int mlID, int slID, int mrID, int srID, MotorCreator<TMotor> factory,
+		Consumer<TMotor> setToCoastMode) {
 		masterLeft = factory.createMotor(mlID);
 		slaveLeft = factory.createMotor(slID);
 		masterRight = factory.createMotor(mrID);
@@ -29,6 +32,11 @@ public class DriveSubsystem<TMotor extends MotorController> extends SubsystemBas
 		slaveLeft.setInverted(true);
 		masterRight.setInverted(false);
 		slaveRight.setInverted(false);
+
+		setToCoastMode.accept(masterLeft);
+		setToCoastMode.accept(slaveLeft);
+		setToCoastMode.accept(masterRight);
+		setToCoastMode.accept(slaveRight);
 	}
 
 	public void tankDrive(double left, double right) {

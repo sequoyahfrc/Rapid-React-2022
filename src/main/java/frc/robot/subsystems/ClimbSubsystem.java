@@ -6,7 +6,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClimbSubsystem extends SubsystemBase {
@@ -20,10 +19,13 @@ public class ClimbSubsystem extends SubsystemBase {
 		motor.setInverted(false);
 		motor.setNeutralMode(NeutralMode.Brake);
 		resetEncoder();
-		setDefaultCommand(new InstantCommand(() -> {
-			SmartDashboard.putString("DB/String 0", "Climber: " + getEncoder());
-		}, this).perpetually());
 
+	}
+
+	@Override
+	public void periodic() {
+		SmartDashboard.putString("DB/String 0", "Climb Encoder");
+		SmartDashboard.putString("DB/String 5", "" + getEncoder());
 	}
 
 	public void setMotor(double speed) {
