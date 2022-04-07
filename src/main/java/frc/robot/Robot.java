@@ -83,7 +83,7 @@ public class Robot extends TimedRobot {
 			case TAXI:
 				final int FRAME_TAXI_STOP = (int) (50 * Constants.TAXI_TIME);
 				if (frameCounter < FRAME_TAXI_STOP) {
-					robotContainer.driveSubsystem.setBothSides(0.5);
+					robotContainer.driveSubsystem.setBothSides(0.6);
 				} else {
 					robotContainer.driveSubsystem.setBothSides(0);
 				}
