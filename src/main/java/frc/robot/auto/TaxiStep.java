@@ -13,10 +13,16 @@ public class TaxiStep implements IStep {
 	}
 
 	@Override
+	public void init() {
+		frameCounter = 0;
+	}
+
+	@Override
 	public boolean periodic() {
 		final int FRAME_END = (int) (50 * Constants.TAXI_TIME);
-		driveSubsystem.tankDrive(0.6, 0.6);	
-		return frameCounter++ < FRAME_END;
+		driveSubsystem.tankDrive(0.6, 0.6);
+		frameCounter++;
+		return frameCounter < FRAME_END;
 	}
 
 	@Override
