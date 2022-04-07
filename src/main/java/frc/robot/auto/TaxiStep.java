@@ -15,7 +15,7 @@ public class TaxiStep implements IStep {
 	@Override
 	public boolean periodic() {
 		final int FRAME_END = (int) (50 * Constants.TAXI_TIME);
-		driveSubsystem.setBothSides(0.5);
+		driveSubsystem.setBothSides(0.6);
 		return frameCounter++ < FRAME_END;
 	}
 
