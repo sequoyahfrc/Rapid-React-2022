@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -41,6 +42,11 @@ public class RobotContainer {
 	}
 
 	private void configureDefaultCommands() {
+	}
+
+	public void periodic() {
+		SmartDashboard.putString("DB/String 2", "Pressure:");
+		SmartDashboard.putString("DB/String 7", "" + compressor.getPressure());
 	}
 
 	private void configureButtonBindings() {
